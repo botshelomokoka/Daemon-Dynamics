@@ -14,6 +14,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load Firebase Config for Server
+import { getFirestore } from 'firebase-admin/firestore';
+
 const firebaseConfigPath = path.resolve(__dirname, 'firebase-applet-config.json');
 let db: any;
 
@@ -26,7 +28,7 @@ if (fs.existsSync(firebaseConfigPath)) {
       projectId: firebaseConfig.projectId
     });
   }
-  db = admin.firestore();
+  db = getFirestore(admin.app(), firebaseConfig.firestoreDatabaseId);
   console.log("[SERVER] Firebase Admin initialized for Agent Hive.");
 }
 
