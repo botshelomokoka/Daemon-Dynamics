@@ -1,0 +1,202 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the application",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "User ID" },
+        "email": { "type": "string", "format": "email", "description": "User email" },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "User role" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["uid", "email", "role", "createdAt"]
+    },
+    "Asset": {
+      "title": "Asset",
+      "description": "An asset held by the user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner User ID" },
+        "symbol": { "type": "string", "description": "Asset symbol (e.g., ETH, USDC)" },
+        "balance": { "type": "number", "description": "Asset balance" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["userId", "symbol", "balance", "updatedAt"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "A transaction record",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner User ID" },
+        "type": { "type": "string", "enum": ["deposit", "swap", "claim", "buy", "sell", "receive", "send"], "description": "Transaction type" },
+        "asset": { "type": "string", "description": "Asset symbol" },
+        "amount": { "type": "number", "description": "Transaction amount" },
+        "price": { "type": "number", "description": "Price at transaction time" },
+        "date": { "type": "string", "format": "date-time", "description": "Transaction date" }
+      },
+      "required": ["userId", "type", "asset", "amount", "price", "date"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "A task for agents to perform",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Task ID" },
+        "title": { "type": "string", "description": "Task title" },
+        "description": { "type": "string", "description": "Task description" },
+        "category": { "type": "string", "description": "Task category for chaining" },
+        "status": { "type": "string", "enum": ["pending", "in-progress", "completed", "failed"], "description": "Task status" },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"], "description": "Task priority" },
+        "assignedAgent": { "type": "string", "description": "ID of the assigned agent" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["id", "title", "status", "priority", "createdAt"]
+    },
+    "TaskChainConfig": {
+      "title": "TaskChainConfig",
+      "description": "Configuration for automated task chaining based on task type/category",
+      "type": "object",
+      "properties": {
+        "triggerCategory": { "type": "string", "description": "The category of the task that triggers the chain" },
+        "nextTaskDescriptionTemplate": { "type": "string", "description": "Prompt or template to generate the next task title/description" },
+        "nextTaskPriority": { "type": "string", "enum": ["low", "medium", "high", "critical"], "description": "Priority of the next task" }
+      },
+      "required": ["triggerCategory", "nextTaskDescriptionTemplate"]
+    },
+    "Agent": {
+      "title": "Agent",
+      "description": "An AI agent in the system",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Agent ID" },
+        "name": { "type": "string", "description": "Agent name" },
+        "type": { "type": "string", "description": "Agent type" },
+        "status": { "type": "string", "enum": ["idle", "working", "offline"], "description": "Agent status" },
+        "earnings": { "type": "number", "description": "Agent total earnings" },
+        "cut": { "type": "number", "description": "Protocol cut percentage" },
+        "cutTrend": { "type": "string", "enum": ["up", "down", "stable"], "description": "Trend of the cut" },
+        "cutReason": { "type": "string", "description": "Reason for the cut change" },
+        "currentTask": { "type": "string", "description": "Current task description" }
+      },
+      "required": ["id", "name", "type", "status"]
+    },
+    "Log": {
+      "title": "Log",
+      "description": "A system log entry",
+      "type": "object",
+      "properties": {
+        "time": { "type": "string", "description": "Timestamp string" },
+        "message": { "type": "string", "description": "Log message" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["time", "message", "createdAt"]
+    },
+    "Config": {
+      "title": "Config",
+      "description": "System configuration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Config ID (e.g., 'global')" },
+        "autoScale": { "type": "boolean", "description": "Whether auto-scaling is enabled" }
+      },
+      "required": ["id", "autoScale"]
+    },
+    "Stream": {
+      "title": "Stream",
+      "description": "A real-time M2M payment stream",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Stream ID" },
+        "from": { "type": "string", "description": "Sender agent/entity" },
+        "to": { "type": "string", "description": "Receiver agent/entity" },
+        "amount": { "type": "number", "description": "Accumulated amount" },
+        "rate": { "type": "string", "description": "Flow rate (e.g., 0.01 / sec)" },
+        "asset": { "type": "string", "description": "Asset symbol" }
+      },
+      "required": ["id", "from", "to", "amount", "rate", "asset"]
+    },
+    "Proposal": {
+      "title": "Proposal",
+      "description": "A DAO or ExCo proposal",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Proposal ID" },
+        "title": { "type": "string", "description": "Proposal title" },
+        "status": { "type": "string", "enum": ["Active", "Passed", "Failed", "Executed", "Voting"], "description": "Proposal status" },
+        "votes": { "type": "string", "description": "Total votes cast (formatted string)" },
+        "support": { "type": "string", "description": "Support percentage" },
+        "time": { "type": "string", "description": "Time remaining or execution state" },
+        "executionReady": { "type": "boolean", "description": "Whether the proposal is ready for L1 execution" },
+        "type": { "type": "string", "enum": ["GOVERNANCE", "EXECUTIVE"], "description": "Governance tier" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["id", "title", "status", "type", "createdAt"]
+    },
+    "AgentMessage": {
+      "title": "AgentMessage",
+      "description": "A message sent between agents",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Message ID" },
+        "sender": { "type": "string", "description": "Sender agent ID" },
+        "receiver": { "type": "string", "description": "Receiver agent ID" },
+        "content": { "type": "string", "description": "Message content" },
+        "type": { "type": "string", "enum": ["task_request", "status_update", "general", "negotiation", "settlement"], "description": "Type of message" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "read": { "type": "boolean", "description": "Whether the message has been read" },
+        "threadId": { "type": "string", "description": "ID for grouping relative messages" },
+        "metadata": { "type": "object", "description": "Additional data like task ID or price" }
+      },
+      "required": ["id", "sender", "receiver", "content", "type", "timestamp", "read"]
+    }
+  },
+  "firestore": {
+    "agent_messages/{messageId}": {
+      "schema": { "$ref": "#/entities/AgentMessage" },
+      "description": "Messages sent between agents in the M2M protocol"
+    },
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "assets/{assetId}": {
+      "schema": { "$ref": "#/entities/Asset" },
+      "description": "User assets"
+    },
+    "transactions/{transactionId}": {
+      "schema": { "$ref": "#/entities/Transaction" },
+      "description": "User transactions"
+    },
+    "tasks/{taskId}": {
+      "schema": { "$ref": "#/entities/Task" },
+      "description": "Agent tasks"
+    },
+    "chain_configs/{configId}": {
+      "schema": { "$ref": "#/entities/TaskChainConfig" },
+      "description": "Configuration for automatic task chaining"
+    },
+    "agents/{agentId}": {
+      "schema": { "$ref": "#/entities/Agent" },
+      "description": "AI Agents"
+    },
+    "logs/{logId}": {
+      "schema": { "$ref": "#/entities/Log" },
+      "description": "System logs"
+    },
+    "proposals/{proposalId}": {
+      "schema": { "$ref": "#/entities/Proposal" },
+      "description": "System proposals for DAO and ExCo"
+    },
+    "streams/{streamId}": {
+      "schema": { "$ref": "#/entities/Stream" },
+      "description": "Real-time M2M payment streams"
+    },
+    "config/{configId}": {
+      "schema": { "$ref": "#/entities/Config" },
+      "description": "System configuration"
+    }
+  }
+}
